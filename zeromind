@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# ZeroMind CLI for ZeroLinux-7x
+# يعمل كبوّابة للأوامر الذكية
+
+function header() {
+  echo -e "\n🔮 ZeroMind – AI Dev Assistant\n"
+}
+
+function list_modules() {
+  echo "متوفر modules:"
+  for dir in modules/*/; do
+    echo " - $(basename "$dir")"
+  done
+}
+
+function run_module() {
+  module="$1"
+  shift
+  mod_script="modules/$module/setup.sh"
+  if [[ -x "$mod_script" ]]; then
+    bash "$mod_script" "$@"
+  else
+    echo "❌ module '$module' غير موجود أو غير قابل للتنفيذ."
+  fi
+}
+
+# 📌 Main
+header
+cmd="$1"; shift
+case "$cmd" in
+  list)
+    list_modules
+    ;;
+  run)
+    module="$1"; shift
+    run_module "$module" "$@"
+    ;;
+  *)
+    echo "Usage:"
+    echo "  zeromind list"
+    echo "  zeromind run <module> [args]"
+    ;;
+esac
